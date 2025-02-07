@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>History Event Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            vertical-align: top;
+            width: auto;
+        }
+        .event {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .event strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+            color: #0050b3;
+        }
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr { 
+                display: block; 
+            }
+            th, td {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr { margin-bottom: 20px; }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+            td::before {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                width: 45%; 
+                padding-right: 10px; 
+                white-space: nowrap;
+                font-weight: bold;
+            }
+            /* Label the data */
+            {% for col in display_columns %}
+            .col-{{ loop.index0 }}::before { content: "{{ col[0] }}"; }
+            {% endfor %}
+        }
+    </style>
+</head>
+<body>
+    <h2>History Event Viewer</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Timeline</th>
+                {% for col in display_columns %}
+                    <th>{{ col[0] }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for date in timeline_dates %}
+            <tr>
+                <td><strong>{{ date }}</strong></td>
+                {% for col in display_columns %}
+                    <td class="col-{{ loop.index0 }}">
+                        {% for event in events_by_date[date][col[0]] %}
+                            <div class="event">
+                                <strong>{{ event.name }}</strong>
+                                <div>{{ event.desc }}</div>
+                            </div>
+                        {% endfor %}
+                    </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
